@@ -14,7 +14,7 @@ fwbox_run() {
     if [ -n "${FWBOX##local *}" ]; then FWBOX="local $FWBOX"; fi
     local list=${FWBOX% *} spec=${FWBOX##* }
     local this=${spec%%,*} opts=$(echo ${spec#*,} | tr ',' ' ')
-    echo "fwbox: $*"
+    echo "fwbox: $*" | sed 's/\001/^A/g; s/\004/^D/g; s/\r/\\r/g' >&2
     FWBOX=$list fwbox_run_"$this" "$opts" "$@"
 }
 
@@ -25,12 +25,11 @@ fwbox_run_local() { local $1; shift
 fwbox_run_ssh() { local $1; shift
     # Quote every argument
     for x; do set -- "$@" "'$1'"; shift; done
-    fwbox_run ssh -p "${port:-22}" "$host" "$*"
+    fwbox_run ssh -Ct -oControlMaster=auto -oControlPath=~/.ssh/%C.sock -p "${port:-22}" "$host" "$*"
 }
 
 fwbox_run_picocom() { local $1; shift
-    fwbox_run picocom --quiet --exit-after 500 --baud 115200 --initstring "$*" "$port"
-    echo
+    fwbox_run picocom --quiet --exit-after 200 --baud 115200 --initstring "$*" "$port"
 }
 
 # flash: read a file from standard input and load it into the board
@@ -45,14 +44,11 @@ fwbox_flash_ecpprog() { local offset=${1:-0x00000000}
     fwbox_run ecpprog -a -o "$offset" -
 }
 
-# upload: send a file to the remote system
-# $1: address of the remote system onto which upload the file
-# $2: port of the remote system to connect to
-# $3: local source file to send to $host
-# $4: path at which the file will be installed on $host
+# put: send a file to the remote system
+# $1: path at which the file will be installed on $host
 
-fwbox_upload_cat() { local dest=$1
-    fwbox_run "cat >'$dest'"
+fwbox_put() { local path=$1
+    fwbox_run "cat >'$path'"
 }
 
 # gdbserver: start a GDB server instance
@@ -74,7 +70,7 @@ fwbox_gdbclient_multiarch() { local port=$1 file=$2
 # $1: serial port device such as /dev/tty# to connect to
 # $2: serial baud rate for communication
 
-fwbox_console_picocom() { local port=$1 baud=$2
+fwbox_picocom() { local port=$1 baud=$2
     fwbox_run picocom --quiet --baud "$baud" "$port"
 }
 

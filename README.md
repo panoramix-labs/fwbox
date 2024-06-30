@@ -36,7 +36,7 @@ FWBOX="ssh,host=172.22.0.2,port=22 picocom,port=/dev/ttyACM0" \
 fwbox_gpioset gpiochip0 27 1
 ```
 
-Complete script example:
+Script example:
 
 ```
 . /opt/fwbox/fwbox.sh
@@ -47,4 +47,29 @@ fwbox_flash_ecpprog 0x100000 <build/zephyr/zephyr.bin
 FWBOX="ssh,host=172.22.0.3,port=22 picocom,port=/dev/ttyACM0"
 fwbox_gpioset_zephyr gpio@48000000 1 0
 fwbox_gpioset_zephyr gpio@48000000 1 1
+```
+
+Configuration example:
+```
+. /opt/fwbox/fwbox.sh
+
+FWBOX="ssh,host=172.22.0.3,port=22"
+FWBOX_PIN_POWER="gpio@48000000 0"
+FWBOX_PIN_RESET="gpio@48000000 1"
+
+alias fwbox_gpioset=fwbox_gpioset_zephyr
+
+fwbox_do_power_cycle() {
+    FWBOX="$FWBOX picocom,port=/dev/ttyACM0" fwbox_gpioset $FWBOX_PIN_POWER 0
+    FWBOX="$FWBOX picocom,port=/dev/ttyACM0" fwbox_gpioset $FWBOX_PIN_POWER 1
+}
+
+fwbox_do_reset() {
+    FWBOX="$FWBOX picocom,port=/dev/ttyACM0" fwbox_gpioset $FWBOX_PIN_RESET 0
+    FWBOX="$FWBOX picocom,port=/dev/ttyACM0" fwbox_gpioset $FWBOX_PIN_RESET 1
+}
+
+fwbox_do_console() {
+    fwbox_picocom /dev/ttyUSB1 196000
+}
 ```
