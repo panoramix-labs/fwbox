@@ -84,13 +84,15 @@ fwbox_gpioset_gpiod() { local block=$1 pin=$2 val=$3
 }
 
 fwbox_gpioset_zephyr() { local block=$1 pin=$2 val=$3
-    fwbox_run "$(printf '%s\r' "gpio conf $block $pin o")"
-    fwbox_run "$(printf '%s\r' "gpio set $block $pin $val")"
+    fwbox_run "$(printf '\r%s\r%s\r' \
+        "gpio conf $block $pin o"\
+        "gpio set $block $pin $val")"
 }
 
 fwbox_gpioset_micropython() { local block=$1 pin=$2 val=$3
-    fwbox_run "$(printf '\x01%s\x04' "from machine import Pin")"
-    fwbox_run "$(printf '\x01%s\x04' "Pin($pin, Pin.OUT).value($val)")"
+    fwbox_run "$(printf '\x01%s\x04%s\x04' \
+        "from machine import Pin" \
+        "Pin($pin, Pin.OUT).value($val)")"
 }
 
 # gpioget: list GPIO blocks available
