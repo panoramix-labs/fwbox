@@ -4,8 +4,6 @@
 # Collection of shell functions to install to both the local and remote system
 # under the path /etc/profile.d/fwbox.sh
 
-NL='
-'
 FWBOX_OPENOCD=openocd.cfg
 
 # Runners: connect to something that connects to something ...
@@ -100,29 +98,29 @@ fwbox_gpioset_gpiod() { local block=$1 pin=$2 val=$3
 }
 
 fwbox_gpioset_zephyr() { local block=$1 pin=$2 val=$3
-    fwbox_run "gpio conf $block $pin o"
-    fwbox_run "gpio set $block $pin $val"
+    fwbox_run "$(printf '%s\r' "gpio conf $block $pin o")"
+    fwbox_run "$(printf '%s\r' "gpio set $block $pin $val")"
 }
 
 fwbox_gpioset_micropython() { local block=$1 pin=$2 val=$3
-    fwbox_run "from machine import Pin"
-    fwbox_run "Pin($pin, Pin.OUT).value($val)"
+    fwbox_run "$(printf '\x01%s\x04' "from machine import Pin")"
+    fwbox_run "$(printf '\x01%s\x04' "Pin($pin, Pin.OUT).value($val)")"
 }
 
 # List GPIO blocks available
 
-alias fwbox_gpiolist=fwbox_gpiolist_gpiod
+alias fwbox_gpioget=fwbox_gpioget_gpiod
 #1: port to connect to for controlling the pin
 #2: baud rate for that port
 #3: GPIO block to control
 #4: GPIO pin to control
 #5: new state of the GPIO pin (0 or 1)
 
-fwbox_gpioget_gpiod() { local block=$1 pin=$2 val=$3
-    fwbox_run gpioget "$block" "$pin" "$val"
+fwbox_gpioget_gpiod() { local block=$1 pin=$2
+    fwbox_run gpioget "$block" "$pin"
 }
 
-fwbox_gpioget_zephyr() { local block=$1 pin=$2 val=$3
+fwbox_gpioget_zephyr() { local block=$1 pin=$2
     fwbox_run gpio conf "$block" "$pin" i
-    fwbox_run gpio get "$block" "$pin" "$val"
+    fwbox_run gpio get "$block" "$pin"
 }
