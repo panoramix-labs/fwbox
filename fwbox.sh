@@ -109,3 +109,10 @@ fwbox_gpioget_zephyr() { local block=$1 pin=$2
     fwbox_run gpio conf "$block" "$pin" i
     fwbox_run gpio get "$block" "$pin"
 }
+
+# dmesg: clear the dmesg history then watch for new messages
+
+fwbox_dmesg() {
+    fwbox_run dmesg -c
+    fwbox_run dmesg -w
+}
