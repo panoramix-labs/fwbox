@@ -29,6 +29,7 @@ fwbox_run_ssh() { local $1; shift
 
 fwbox_run_picocom() { local $1; shift
     fwbox_run picocom --quiet --exit-after 500 --baud 115200 --initstring "$*$NL" "$port"
+    echo
 }
 
 # Read a file from standard input and load it into the board
