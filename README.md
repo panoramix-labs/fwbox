@@ -41,10 +41,10 @@ Complete script example:
 ```
 . /opt/fwbox/fwbox.sh
 
+FWBOX="ssh,host=172.22.0.3,port=22"
+fwbox_flash_ecpprog 0x100000 <build/zephyr/zephyr.bin
+
 FWBOX="ssh,host=172.22.0.3,port=22 picocom,port=/dev/ttyACM0"
 fwbox_gpioset_zephyr gpio@48000000 1 0
 fwbox_gpioset_zephyr gpio@48000000 1 1
-
-FWBOX="ssh,host=172.22.0.3,port=22"
-fwbox_flash_ecpprog 0x100000 <build/zephyr/zephyr.bin
 ```
