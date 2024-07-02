@@ -39,7 +39,7 @@ fwbox_runner_sudo() { local $vars
 
 fwbox_runner_ssh() { local $vars
     for x; do set -- "$@" "'$1'"; shift; done
-    fwbox_run $SSH -Ct -oControlMaster=auto -oControlPath=~/.ssh/%C.sock -p "${port:-22}" "${host:?}" "$*"
+    fwbox_run $SSH -C -oControlMaster=auto -oControlPath=~/.ssh/%C.sock -p "${port:-22}" "${host:?}" "$*"
 }
 
 fwbox_runner_picocom() { local $vars
