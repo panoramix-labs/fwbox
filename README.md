@@ -17,19 +17,13 @@ Install fwbox locally:
 sudo git clone https://github.com/firmware-box/fwbox /opt/fwbox
 ```
 
-Get all commands sent over SSH:
+Sent commands over SSH:
 
 ```bash
 FWBOX="ssh,host=172.22.0.2,port=22"
 ```
 
-Get all commands sent over SSH and then over a serial console:
-
-```bash
-FWBOX="ssh,host=172.22.0.2,port=22 picocom,port=/dev/ttyACM0"
-```
-
-Set a GPIO pin0.27 to 1 over a serial console after logging to SSH:
+Log into SSH, then into picocom, then set a GPIO pin
 
 ```bash
 FWBOX="ssh,host=172.22.0.2,port=22 picocom,port=/dev/ttyACM0"
@@ -38,35 +32,29 @@ fwbox_zephyr_shell  27 1
 
 Board configuration example:
 
-```
+```bash
 . /opt/fwbox/fwbox.sh
 
-box="ssh,host=172.22.0.3,port=22"
-dev="picocom,port=/dev/ttyACM0"
-log="console,port=/dev/ttyUSB1,baud=153600"
+# Description of how to connect to various resources
+FWBOX="ssh,host=172.22.0.3,port=22"
+FWBOX_GPIO="$FWBOX picocom,port=/dev/ttyACM0 zephyr"
+FWBOX_LOGS="$FWBOX console,port=/dev/ttyUSB1,baud=153600"
 
-pin_reset="gpio@48000000 0"
-pin_power="gpio@48000000 1"
+# Configuration for built-in actions
+FWBOX_GPIO_RESET="gpio@48000000 0"
+FWBOX_GPIO_POWER="gpio@48000000 1"
 
-fwbox_do_flash_zephyr() (
-    FWBOX="$box"
-    fwbox_flash_ecpprog 0x100000 <build/zephyr/zephyr.bin
-)
+# Command alias to choose the syntax for built-in actions
+alias fwbox_gpioset=fwbox_gpioset_zephyr
 
-fwbox_do_power_cycle() (
-    FWBOX="$box $dev"
-    fwbox_gpioset_zephyr $pin_power 0
-    fwbox_gpioset_zephyr $pin_power 1
-)
-
-fwbox_do_reset() (
-    FWBOX="$box $dev"
-    fwbox_gpioset_zephyr $pin_reset 0
-    fwbox_gpioset_zephyr $pin_reset 1
-)
-
-fwbox_do_console() (
-    FWBOX="$box $log"
-    fwbox_run
-)
+fwbox_do_flash_zephyr() {
+    fwbox_flash 0x100000 <build/zephyr/zephyr.bin
+}
 ```
+
+Built-in actions:
+
+- `fwbox_do_power_cycle` - issue a power cycle by toggling GPIO pins
+- `fwbox_do_reset` - issue a soft reset by toggling GPIO pins
+- `fwbox_do_dmesg` - access to the dmesg kernel debug messages feed
+- `fwbox_do_logs` - access to the logs from the device over serial
