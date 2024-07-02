@@ -11,6 +11,12 @@ It supports multiple hops through serial links and SSH which allows it to run
 MicroPython or Zephyr Shell commands so that a small USB devboard can be
 connected, leveraging one environment variable to build proxys.
 
+Install fwbox locally:
+
+```
+sudo git clone https://github.com/firmware-box/fwbox /opt/fwbox
+```
+
 Get all commands sent over SSH:
 
 ```bash
@@ -23,55 +29,44 @@ Get all commands sent over SSH and then over a serial console:
 FWBOX="ssh,host=172.22.0.2,port=22 picocom,port=/dev/ttyACM0"
 ```
 
-Run the default GDB server on port `:3333`
+Set a GPIO pin0.27 to 1 over a serial console after logging to SSH:
 
 ```bash
-fwbox_gdbserver :3333
+FWBOX="ssh,host=172.22.0.2,port=22 picocom,port=/dev/ttyACM0"
+fwbox_zephyr_shell  27 1
 ```
 
-Use a connection method just to set a GPIO pin0.27 to 1:
+Board configuration example:
 
-```bash
-FWBOX="ssh,host=172.22.0.2,port=22 picocom,port=/dev/ttyACM0" \
-fwbox_gpioset gpiochip0 27 1
 ```
-
-Script example:
-
-```bash
 . /opt/fwbox/fwbox.sh
 
-FWBOX="ssh,host=172.22.0.3,port=22"
-fwbox_flash_ecpprog 0x100000 <build/zephyr/zephyr.bin
+box="ssh,host=172.22.0.3,port=22"
+dev="picocom,port=/dev/ttyACM0"
+log="console,port=/dev/ttyUSB1,baud=153600"
 
-FWBOX="ssh,host=172.22.0.3,port=22 picocom,port=/dev/ttyACM0"
-fwbox_gpioset_zephyr gpio@48000000 1 0
-fwbox_gpioset_zephyr gpio@48000000 1 1
-```
+pin_reset="gpio@48000000 0"
+pin_power="gpio@48000000 1"
 
-Configuration example:
-```bash
-. /opt/fwbox/fwbox.sh
-
-FWBOX="ssh,host=172.22.0.3,port=22"
-FWBOX_PIN_POWER="gpio@48000000 0"
-FWBOX_PIN_RESET="gpio@48000000 1"
-
-alias fwbox_gpioset=fwbox_gpioset_zephyr
+fwbox_do_flash_zephyr() (
+    FWBOX="$box"
+    fwbox_flash_ecpprog 0x100000 <build/zephyr/zephyr.bin
+)
 
 fwbox_do_power_cycle() (
-    FWBOX="$FWBOX picocom,port=/dev/ttyACM0"
-    fwbox_gpioset $FWBOX_PIN_POWER 0
-    fwbox_gpioset $FWBOX_PIN_POWER 1
+    FWBOX="$box $dev"
+    fwbox_gpioset_zephyr $pin_power 0
+    fwbox_gpioset_zephyr $pin_power 1
 )
 
 fwbox_do_reset() (
-    FWBOX="$FWBOX picocom,port=/dev/ttyACM0"
-    fwbox_gpioset $FWBOX_PIN_RESET 0
-    fwbox_gpioset $FWBOX_PIN_RESET 1
+    FWBOX="$box $dev"
+    fwbox_gpioset_zephyr $pin_reset 0
+    fwbox_gpioset_zephyr $pin_reset 1
 )
 
 fwbox_do_console() (
-    fwbox_picocom /dev/ttyUSB1 196000
+    FWBOX="$box $log"
+    fwbox_run
 )
 ```
