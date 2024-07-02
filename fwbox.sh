@@ -32,6 +32,10 @@ fwbox_runner_local() { local $vars
     "$@"
 }
 
+fwbox_runner_sudo() { local $vars
+    fwbox_run sudo "$@"
+}
+
 fwbox_runner_ssh() { local $vars
     for x; do set -- "$@" "'$1'"; shift; done
     fwbox_run $SSH -Ct -oControlMaster=auto -oControlPath=~/.ssh/%C.sock -p "${port:-22}" "${host:?}" "$*"
