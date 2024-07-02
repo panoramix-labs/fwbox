@@ -11,23 +11,30 @@ It supports multiple hops through serial links and SSH which allows it to run
 MicroPython or Zephyr Shell commands so that a small USB devboard can be
 connected, leveraging one environment variable to build proxys.
 
-Install fwbox locally:
+Get started:
 
 ```
+# Install fwbox
 sudo git clone https://github.com/firmware-box/fwbox /opt/fwbox
+
+# Load the .fwbox/tinyclunx33_sita.sh script
+fwbox_use tinyclunx33_sita
+
+# Run any command from this list
+fwbox_do_<TAB>
 ```
 
-Sent commands over SSH:
+Send commands over SSH:
 
 ```bash
 FWBOX="ssh,host=172.22.0.2,port=22"
 ```
 
-Log into SSH, then into picocom, then set a GPIO pin
+Send commands over SSH then picocom, to set a GPIO pin
 
 ```bash
 FWBOX="ssh,host=172.22.0.2,port=22 picocom,port=/dev/ttyACM0"
-fwbox_zephyr_shell  27 1
+fwbox_zephyr_shell gpio@48000000 27 1
 ```
 
 Board configuration example:
@@ -44,11 +51,17 @@ FWBOX_LOGS="$FWBOX console,port=/dev/ttyUSB1,baud=153600"
 FWBOX_GPIO_RESET="gpio@48000000 0"
 FWBOX_GPIO_POWER="gpio@48000000 1"
 
-# Command alias to choose the syntax for built-in actions
+# Alias to choose the syntax for built-in actions
 alias fwbox_gpioset=fwbox_gpioset_zephyr
 
 fwbox_do_flash_zephyr() {
     fwbox_flash 0x100000 <build/zephyr/zephyr.bin
+}
+
+fwbox_do_all() {
+    fwbox_do_flash_zephyr
+    fwbox_do_power_cycle
+    fwbox_do_reset
 }
 ```
 
