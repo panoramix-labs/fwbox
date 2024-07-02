@@ -36,7 +36,7 @@ fwbox_runner_console() { local $1; shift
     fwbox_run $PICOCOM --escape "@" --baud "${baud:?}" --initstring "$*" "${port:?}"
 }
 
-fwbox_runner_zephyr_shell() {
+fwbox_runner_zephyr() {
     fwbox_run "$(printf '\r'; printf '%s\r' "$@")"
 }
 
@@ -97,4 +97,24 @@ fwbox_gpioget_zephyr() { local port=${1:?} pin=${2:?}
 
 fwbox_gpioget_micropython() { local pin=${2:?}
     fwbox_run "from machine import Pin" "Pin($pin, Pin.IN).value()"
+}
+
+# do: final actions to run on the shell, taking no argument
+
+fwbox_do_power_cycle() {
+    FWBOX=$FWBOX_GPIO fwbox_gpioset $FWBOX_GPIO_POWER 0
+    FWBOX=$FWBOX_GPIO fwbox_gpioset $FWBOX_GPIO_POWER 1
+}
+
+fwbox_do_reset() {
+    FWBOX=$FWBOX_GPIO fwbox_gpioset $FWBOX_GPIO_RESET 0
+    FWBOX=$FWBOX_GPIO fwbox_gpioset $FWBOX_GPIO_RESET 1
+}
+
+fwbox_do_logs() {
+    FWBOX="$FWBOX_LOGS" fwbox_run
+}
+
+fwbox_do_dmesg() {
+    fwbox_run "dmesg -c && dmesg -w"
 }
