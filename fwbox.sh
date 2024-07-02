@@ -121,5 +121,6 @@ fwbox_do_logs() {
 }
 
 fwbox_do_dmesg() {
-    fwbox_run "dmesg -c && dmesg -w"
+    fwbox_run dmesg -c
+    fwbox_run dmesg -w
 }
