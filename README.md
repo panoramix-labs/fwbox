@@ -50,8 +50,8 @@ Board configuration example:
 
 # Description of how to connect to various resources
 FWBOX="ssh,host=172.22.0.3,port=22"
-FWBOX_GPIO="$FWBOX picocom,port=/dev/ttyACM0 repl"
-FWBOX_LOGS="$FWBOX console,port=/dev/ttyUSB1,baud=153600"
+FWBOX_GPIOSET="$FWBOX picocom,port=/dev/ttyACM0 repl"
+FWBOX_CONSOLE="$FWBOX console,port=/dev/ttyUSB1,baud=153600"
 
 # Configuration for built-in actions
 FWBOX_GPIO_RESET="gpio@48000000 0"

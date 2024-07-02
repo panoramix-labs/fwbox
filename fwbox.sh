@@ -112,17 +112,17 @@ fwbox_gpioget_micropython() { local pin=${2:?}
 # Final actions to run on the shell, taking no argument
 
 fwbox_do_power_cycle() {
-    FWBOX=$FWBOX_GPIO fwbox_gpioset $FWBOX_GPIO_POWER 0
-    FWBOX=$FWBOX_GPIO fwbox_gpioset $FWBOX_GPIO_POWER 1
+    FWBOX="$FWBOX_GPIOSET" fwbox_gpioset $FWBOX_GPIO_POWER 0
+    FWBOX="$FWBOX_GPIOSET" fwbox_gpioset $FWBOX_GPIO_POWER 1
 }
 
 fwbox_do_reset() {
-    FWBOX=$FWBOX_GPIO fwbox_gpioset $FWBOX_GPIO_RESET 0
-    FWBOX=$FWBOX_GPIO fwbox_gpioset $FWBOX_GPIO_RESET 1
+    FWBOX="$FWBOX_GPIOSET" fwbox_gpioset $FWBOX_GPIO_RESET 0
+    FWBOX="$FWBOX_GPIOSET" fwbox_gpioset $FWBOX_GPIO_RESET 1
 }
 
-fwbox_do_logs() {
-    FWBOX="$FWBOX_LOGS" fwbox_run
+fwbox_do_console() {
+    FWBOX="$FWBOX_CONSOLE" SSH="$SSH -t" fwbox_run
 }
 
 fwbox_do_dmesg() {
