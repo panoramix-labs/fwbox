@@ -57,11 +57,13 @@ FWBOX_LOGS="$FWBOX console,port=/dev/ttyUSB1,baud=153600"
 FWBOX_GPIO_RESET="gpio@48000000 0"
 FWBOX_GPIO_POWER="gpio@48000000 1"
 
-# Alias to choose the syntax for built-in actions
-alias fwbox_gpioset=fwbox_gpioset_zephyr
+# Alias to choose the back-end for 'gpioset' operation
+fwbox_gpioset() {
+    fwbox_gpioset_zephyr "$@"
+}
 
 fwbox_do_flash_zephyr() {
-    fwbox_flash 0x100000 <build/zephyr/zephyr.bin
+    fwbox_flash_ecpprog 0x100000 <build/zephyr/zephyr.bin
 }
 
 fwbox_do_all() {
