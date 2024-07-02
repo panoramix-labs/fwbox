@@ -25,6 +25,9 @@ fwbox_use tinyclunx33_sita
 
 # Run any command from this list
 fwbox_do_<TAB>
+
+# Or connect to the development box to run custom commands
+fwbox_run
 ```
 
 Send commands over SSH:
@@ -47,7 +50,7 @@ Board configuration example:
 
 # Description of how to connect to various resources
 FWBOX="ssh,host=172.22.0.3,port=22"
-FWBOX_GPIO="$FWBOX picocom,port=/dev/ttyACM0 zephyr"
+FWBOX_GPIO="$FWBOX picocom,port=/dev/ttyACM0 repl"
 FWBOX_LOGS="$FWBOX console,port=/dev/ttyUSB1,baud=153600"
 
 # Configuration for built-in actions

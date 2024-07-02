@@ -24,6 +24,7 @@ fwbox_use() { local name=${1:?} path=$PWD
 fwbox_run() {
     if [ -n "${FWBOX##local *}" ]; then FWBOX="local $FWBOX"; fi
     local this=${FWBOX##* }
+    echo "fwbox: $@" | cat -v >&2
     FWBOX=${FWBOX% *} vars=$(IFS=,; echo $this) fwbox_runner_${this%%,*} "$@"
 }
 
@@ -44,12 +45,8 @@ fwbox_runner_console() { local $vars
     fwbox_run $PICOCOM --escape "@" --baud "${baud:-115200}" --initstring "$*" "${port:?}"
 }
 
-fwbox_runner_zephyr() { local $vars
+fwbox_runner_repl() { local $vars
     fwbox_run "$(printf '\r'; printf '%s\r' "$@")"
-}
-
-fwbox_runner_micropython() { local $vars
-    fwbox_run "$(printf '\001'; printf '%s\004' "$@"; printf '\002')"
 }
 
 # Read a file from standard input and load it into the board
