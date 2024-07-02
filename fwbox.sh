@@ -14,6 +14,7 @@ ECPPROG=ecpprog
 
 fwbox_use() { local name=${1:?} path=$PWD
     while [ "$path" != "" -a ! -d "$path/.fwbox" ]; do path=${path%/*}; done
+    FWBOX_PATH=$(readlink -f "$path")
     . "$path/.fwbox/$name.sh"
 }
 
