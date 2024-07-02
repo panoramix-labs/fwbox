@@ -13,11 +13,8 @@ ECPPROG=ecpprog
 # $1: name of the configuration file under the ".fwbox" directory
 
 fwbox_use() { local name=${1:?} path=$PWD
-    while [ "$path" != "" ]; do
-        if [ -d "$path/.fwbox" ]; then . "$path/.fwbox/$name.sh"; return; fi
-        path=${path%/*}
-    done
-    echo "no '.fwbox' directory found on '$PWD' or any parent directory" >&2
+    while [ "$path" != "" -a ! -d "$path/.fwbox" ]; do path=${path%/*}; done
+    . "$path/.fwbox/$name.sh"
 }
 
 # Send the specified command on the runner according to the chain in $FWBOX
@@ -26,32 +23,32 @@ fwbox_use() { local name=${1:?} path=$PWD
 
 fwbox_run() {
     if [ -n "${FWBOX##local *}" ]; then FWBOX="local $FWBOX"; fi
-    echo "fwbox: $*" | cat -v >&2
-    FWBOX=${FWBOX% *} fwbox_runner_$(echo ${FWBOX##* } | tr ',' ' ') "$@"
+    local this=${FWBOX##* }
+    FWBOX=${FWBOX% *} vars=$(IFS=,; echo $this) fwbox_runner_${this%%,*} "$@"
 }
 
-fwbox_runner_local() { local $1; shift
+fwbox_runner_local() { local $vars
     "$@"
 }
 
-fwbox_runner_ssh() { local $1; shift
+fwbox_runner_ssh() { local $vars
     for x; do set -- "$@" "'$1'"; shift; done
     fwbox_run $SSH -Ct -oControlMaster=auto -oControlPath=~/.ssh/%C.sock -p "${port:-22}" "${host:?}" "$*"
 }
 
-fwbox_runner_picocom() { local $1; shift
+fwbox_runner_picocom() { local $vars
     fwbox_run $PICOCOM --quiet --escape "@" --exit-after 200 --baud "${baud:-115200}" --initstring "$*" "${port:?}"
 }
 
-fwbox_runner_console() { local $1; shift
+fwbox_runner_console() { local $vars
     fwbox_run $PICOCOM --escape "@" --baud "${baud:-115200}" --initstring "$*" "${port:?}"
 }
 
-fwbox_runner_zephyr() {
+fwbox_runner_zephyr() { local $vars
     fwbox_run "$(printf '\r'; printf '%s\r' "$@")"
 }
 
-fwbox_runner_micropython() {
+fwbox_runner_micropython() { local $vars
     fwbox_run "$(printf '\001'; printf '%s\004' "$@"; printf '\002')"
 }
 

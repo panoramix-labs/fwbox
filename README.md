@@ -17,6 +17,9 @@ Get started:
 # Install fwbox
 sudo git clone https://github.com/firmware-box/fwbox /opt/fwbox
 
+# Source fwbox.sh to have the `fwbox_use` utility at hand
+. /opt/fwbox/fwbox.sh
+
 # Load the .fwbox/tinyclunx33_sita.sh script
 fwbox_use tinyclunx33_sita
 
