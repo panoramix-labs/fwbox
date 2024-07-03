@@ -4,10 +4,10 @@
 # Collection of shell functions to install only on the local system
 # under the path /opt/fwbox/fwbox.sh
 
-GDB="gdb-multiarch -q -nx"
-SSH="ssh -C -oControlMaster=auto -oControlPath=~/.ssh/%C.sock"
-PICOCOM="picocom --quiet --escape @"
-ECPPROG="ecpprog"
+: ${GDB:=gdb-multiarch -q -nx}
+: ${SSH:=ssh -C -oControlMaster=auto -oControlPath=~/.ssh/%C.sock}
+: ${PICOCOM:=picocom --quiet --escape @}
+: ${ECPPROG:=ecpprog -a}
 
 # Search a ".fwbox" configuration directory and source the configuration file from here
 # $1: name of the configuration file under the ".fwbox" directory
@@ -20,7 +20,7 @@ fwbox_use() { local name=${1:?} path=$PWD
 
 # Send the specified command on the runner according to the chain in $FWBOX
 # $@: command and argument list to execute on the target
-# $FWBOX: specification telling where the command should be run
+# $FWBOX: specification of the full chain from local machine to interpreter
 
 fwbox_run() {
     if [ -n "${FWBOX##local *}" ]; then FWBOX="local $FWBOX"; fi
@@ -67,11 +67,10 @@ fwbox_runner_gdb() { local $vars
 
 # Read a file from standard input and load it into the board
 # $1: offset within the flash at which load the firmware
-# $2: port through which send the flash command
 # stdin: firmware file to send
 
 fwbox_ecpprog() { local offset=${1:-0x00000000}
-    fwbox_run $ECPPROG -a -o "$offset" -
+    fwbox_run $ECPPROG -o "$offset" -
 }
 
 # Toggle a GPIO pin to power-cycle a board
