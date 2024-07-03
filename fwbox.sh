@@ -44,6 +44,7 @@ fwbox_runner_ssh() { local $vars
 
 fwbox_runner_picocom() { local $vars
     fwbox_run $PICOCOM --quiet --escape "@" --exit-after 200 --baud "${baud:-115200}" --initstring "$*" "${port:?}"
+    echo EOF >&2
 }
 
 fwbox_runner_console() { local $vars
