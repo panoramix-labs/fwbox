@@ -36,11 +36,12 @@ Send commands over SSH:
 FWBOX="ssh,host=172.22.0.2,port=22"
 ```
 
-Send commands over SSH then picocom, to set a GPIO pin
+Send Zephyr shell commands to toggle a GPIO pin, over picocom over SSH.
 
 ```bash
-FWBOX="ssh,host=172.22.0.2,port=22 picocom,port=/dev/ttyACM0"
-fwbox_zephyr_shell gpio@48000000 27 1
+FWBOX="ssh,host=172.22.0.2,port=22 picocom,port=/dev/ttyACM0 repl"
+fwbox_run "gpio set gpio@48000000 27 1"
+fwbox_run "gpio set gpio@48000000 27 0"
 ```
 
 Board configuration example:
@@ -63,14 +64,15 @@ fwbox_gpioset() {
 }
 
 fwbox_do_flash_zephyr() {
-    fwbox_flash_ecpprog 0x100000 <build/zephyr/zephyr.bin
+    fwbox_ecpprog 0x100000 <build/zephyr/zephyr.bin
 }
 
-fwbox_do_all() {
+fwbox_do_all() (
+    set -e # stop on failure
     fwbox_do_flash_zephyr
     fwbox_do_power_cycle
     fwbox_do_reset
-}
+)
 ```
 
 Built-in actions:
