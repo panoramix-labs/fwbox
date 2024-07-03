@@ -4,10 +4,10 @@
 # Collection of shell functions to install only on the local system
 # under the path /opt/fwbox/fwbox.sh
 
-GDB=gdb-multiarch
-SSH=ssh
-PICOCOM=picocom
-ECPPROG=ecpprog
+GDB="gdb-multiarch -q -nx"
+SSH="ssh -C -oControlMaster=auto -oControlPath=~/.ssh/%C.sock"
+PICOCOM="picocom --quiet --escape @"
+ECPPROG="ecpprog"
 
 # Search a ".fwbox" configuration directory and source the configuration file from here
 # $1: name of the configuration file under the ".fwbox" directory
@@ -39,16 +39,16 @@ fwbox_runner_sudo() { local $vars
 
 fwbox_runner_ssh() { local $vars
     for x; do set -- "$@" "'$1'"; shift; done
-    fwbox_run $SSH -C -oControlMaster=auto -oControlPath=~/.ssh/%C.sock -p "${port:-22}" "${host:?}" "$*"
+    fwbox_run $SSH -p "${port:-22}" "${host:?}" "$*"
 }
 
 fwbox_runner_picocom() { local $vars
-    fwbox_run $PICOCOM --quiet --escape "@" --exit-after 200 --baud "${baud:-115200}" --initstring "$*" "${port:?}"
+    fwbox_run $PICOCOM --baud "${baud:-115200}" --initstring "$*" --exit-after 200 "${port:?}"
     echo EOF >&2
 }
 
 fwbox_runner_console() { local $vars
-    fwbox_run $PICOCOM --escape "@" --baud "${baud:-115200}" --initstring "$*" "${port:?}"
+    fwbox_run $PICOCOM --baud "${baud:-115200}" --initstring "$*" "${port:?}"
 }
 
 fwbox_runner_repl() { local $vars
@@ -60,25 +60,18 @@ fwbox_runner_manual() { local $vars
     read
 }
 
+fwbox_runner_gdb() { local $vars
+    for x; do set -- "$@" -ex "$1"; shift; done
+    fwbox_run $GDB -ex "target extended-remote ${port:-:3333}" "$@" "${file:?}"
+}
+
 # Read a file from standard input and load it into the board
 # $1: offset within the flash at which load the firmware
 # $2: port through which send the flash command
 # stdin: firmware file to send
 
-fwbox_flash_gdb() { local host=${1:?}
-    fwbox_run $GDB -q -nx -ex "target extended-remote $port" -ex "load" -ex "continue" firmware.elf
-}
-
-fwbox_flash_ecpprog() { local offset=${1:-0x00000000}
+fwbox_ecpprog() { local offset=${1:-0x00000000}
     fwbox_run $ECPPROG -a -o "$offset" -
-}
-
-# Connect to a runing GDB server
-# $1: host:port or serial port at which GDB is listening
-# $2: ELF file to use for symbols
-
-fwbox_gdb() { local host=${1:?} file=${2:?}
-    fwbox_run $GDB -q -nx -ex "target extended $host:3333" "$file"
 }
 
 # Toggle a GPIO pin to power-cycle a board
