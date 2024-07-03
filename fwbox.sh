@@ -55,6 +55,11 @@ fwbox_runner_repl() { local $vars
     fwbox_run "$(printf '\r'; printf '%s\r' "$@")"
 }
 
+fwbox_runner_manual() { local $vars
+    printf '\x1B[1m%s\x1B[m ' "fwbox: $*"
+    read
+}
+
 # Read a file from standard input and load it into the board
 # $1: offset within the flash at which load the firmware
 # $2: port through which send the flash command
