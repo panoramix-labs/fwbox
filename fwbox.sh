@@ -12,12 +12,10 @@
 # Search a ".fwbox" configuration directory and source the configuration file from here
 # $1: name of the configuration file under the ".fwbox" directory
 
-fwbox_use() { local name=${1:-$FWBOX_USE} path=$PWD
-    FWBOX_USE=$name
-    while [ "$path" != "" -a ! -d "$path/.fwbox" ]; do path=${path%/*}; done
-    FWBOX_PATH=$(readlink -f "$path")/.fwbox
-    echo "loading '$path/.fwbox/$name.sh'" >&2
-    . "$path/.fwbox/$name.sh"
+fwbox_use() { FWBOX_USE=${1:-$FWBOX_USE} FWBOX_PATH=${FWBOX_PATH:-$PWD}
+    while [ -n "$FWBOX_PATH" -a ! -d "$FWBOX_PATH/.fwbox" ]; do FWBOX_PATH=${FWBOX_PATH%/*}; done
+    echo "loading '$FWBOX_PATH/.fwbox/$FWBOX_USE.sh'" >&2
+    . "$FWBOX_PATH/.fwbox/$FWBOX_USE.sh"
 }
 
 # Send the specified command on the runner according to the chain in $FWBOX
