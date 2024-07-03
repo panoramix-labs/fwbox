@@ -12,9 +12,11 @@
 # Search a ".fwbox" configuration directory and source the configuration file from here
 # $1: name of the configuration file under the ".fwbox" directory
 
-fwbox_use() { local name=${1:?} path=$PWD
+fwbox_use() { local name=${1:-$FWBOX_USE} path=$PWD
+    FWBOX_USE=$name
     while [ "$path" != "" -a ! -d "$path/.fwbox" ]; do path=${path%/*}; done
     FWBOX_PATH=$(readlink -f "$path")/.fwbox
+    echo "loading '$path/.fwbox/$name.sh'" >&2
     . "$path/.fwbox/$name.sh"
 }
 
