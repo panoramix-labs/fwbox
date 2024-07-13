@@ -119,11 +119,15 @@ fwbox_do_reset() {
     FWBOX="$FWBOX_GPIOSET" fwbox_gpioset $FWBOX_GPIO_RESET 1
 }
 
+fwbox_do_hold() {
+    FWBOX="$FWBOX_GPIOSET" fwbox_gpioset $FWBOX_GPIO_RESET 0
+}
+
 fwbox_do_console() {
     FWBOX="$FWBOX_CONSOLE" SSH="$SSH -t" fwbox_run
 }
 
 fwbox_do_dmesg() {
-    fwbox_run dmesg -c
-    fwbox_run dmesg -w
+    fwbox_run dmesg -tc
+    fwbox_run dmesg -tw
 }
