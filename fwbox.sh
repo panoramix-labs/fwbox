@@ -121,6 +121,7 @@ fwbox_do_reset() {
 
 fwbox_do_hold() {
     FWBOX="$FWBOX_GPIOSET" fwbox_gpioset $FWBOX_GPIO_RESET 0
+    fwbox_do_power_cycle
 }
 
 fwbox_do_console() {
