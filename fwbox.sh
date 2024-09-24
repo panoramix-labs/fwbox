@@ -16,6 +16,7 @@ fwbox_use() { FWBOX_USE=${1:-$FWBOX_USE} FWBOX_PATH=${FWBOX_PATH:-$PWD}
     while [ -n "$FWBOX_PATH" -a ! -d "$FWBOX_PATH/.fwbox" ]; do FWBOX_PATH=${FWBOX_PATH%/*}; done
     echo "loading '$FWBOX_PATH/.fwbox/$FWBOX_USE.sh'" >&2
     . "$FWBOX_PATH/.fwbox/$FWBOX_USE.sh"
+    export FWBOX_USE="$FWBOX_USE" FWBOX_PATH="$FWBOX_PATH"
 }
 
 # Send the specified command on the runner according to the chain in $FWBOX
