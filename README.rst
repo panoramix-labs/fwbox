@@ -10,7 +10,13 @@ For now, very few commands are supported, and only for the sigrok-cli back-end.
 Building and running
 ********************
 
-This is not in condition to be published to pip yet, so building manually is required:
+This project is not yet on pip, but can be installed from an URL:
+
+.. code-block:: console
+
+   pip install git+https://github.com/panoramix-labs/fwbox
+
+For hacking on it, it can also be built manually this way:
 
 .. code-block:: console
 
