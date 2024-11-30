@@ -14,7 +14,14 @@ This is not in condition to be published to pip yet, so building manually is req
 
 .. code-block:: console
 
+   # Clone the repo
    git clone https://github.com/panoramix-labs/fwbox
    cd fwbox
+
+   # Enable a virtual environment
+   python -m venv .venv
+   . .venv/activate
+
+   # build and install the package
    python -m build
    pip install .
