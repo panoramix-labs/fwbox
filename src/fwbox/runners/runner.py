@@ -26,7 +26,7 @@ class Runner:
 
     @classmethod
     def str(cls, name: str, platform: Platform) -> str:
-        return f'{platform}.{cls.__name__}.{name}'
+        return f'{platform}:{cls.__name__}:{name}'
 
     @classmethod
     def add(cls, name: str, platform: Platform):
