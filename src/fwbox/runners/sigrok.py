@@ -50,12 +50,12 @@ class SigrokRunner(Runner):
         path = f'/dev/shm/fwbox.{self}.sr'
         if os.path.isfile(path):
             os.unlink(path)
-        x = self.run('--output-file', path, '--output-format', 'srzip', '--samples', num, '--config', f'samplerate={self.speed}')
+        x = self.run('--output-file', path, '--output-format', 'srzip',
+                     '--samples', num, '--config', f'samplerate={self.speed}')
         if x.returncode == 0:
             logger.info('Press <Space> in pulseview to reload the file')
             return path
         else:
             logger.error('capture failed')
-
 
 Runner.types.append(SigrokRunner)
