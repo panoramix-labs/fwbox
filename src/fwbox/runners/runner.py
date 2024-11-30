@@ -1,6 +1,8 @@
 # Copyright (c) 2024 Panoramix Labs
 # SPDX-License-Identifier: MIT
 
+import re
+
 from fwbox.platform import Platform
 
 class Runner:
@@ -22,11 +24,11 @@ class Runner:
     @classmethod
     def scan(cls, platform: Platform) -> list[str]:
         '''Return a list of strings corresponding to devices on this platform.'''
-        raise NotImplementedError('scan not implemented for this runner')
+        logger.warning(f'"scan" not implemented for {cls}')
 
     @classmethod
     def str(cls, name: str, platform: Platform) -> str:
-        return f'{platform}:{cls.__name__}:{name}'
+        return re.sub('[^A-Za-z0-9]', '_', f'{platform}_{cls.__name__}_{name}').lower()
 
     @classmethod
     def add(cls, name: str, platform: Platform):
@@ -35,9 +37,13 @@ class Runner:
         if id not in cls.all:
             cls.all[id] = cls(name, platform)
 
+    def capture(self, num: int) -> str:
+        '''Capture a "trace"and return the path name so it can be downloaded.'''
+        logger.warning(f'"scan" not implemented for {self}')
+
     def ping(self) -> bool:
         '''Return a whether the connection with the runner is alive.'''
-        return False
+        logger.warning(f'"ping" not implemented for {self}')
 
     def run(self, *args):
         '''Run the runner command on the current platform.'''

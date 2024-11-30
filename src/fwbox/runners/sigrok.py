@@ -2,8 +2,15 @@
 # SPDX-License-Identifier: MIT
 
 import sys
+import os
+import logging
+
 from fwbox.platform import Platform
 from fwbox.runners.runner import Runner
+
+
+logger = logging.getLogger('fwbox')
+
 
 class SigrokRunner(Runner):
     '''
@@ -16,13 +23,9 @@ class SigrokRunner(Runner):
     def __init__(self, name: str, platform: Platform):
         super(SigrokRunner, self).__init__(name, platform)
 
-        if ':' not in name:
-            self.driver = name
-            self.config = ''
-        else:
-            self.driver, self.config = name.split(':')
-
-        self.command = self.command + ('--driver', self.driver, '--config', self.config)
+        self.driver = name
+        self.command = self.command + ('--driver', self.driver)
+        self.speed = '8M'
 
         stdout = self.run('--show').stdout
         for line in stdout.decode('utf8').split('\n'):
@@ -42,5 +45,17 @@ class SigrokRunner(Runner):
 
     def ping(self) -> bool:
         return self.run('--show').returncode == 0
+
+    def capture(self, num: str) -> bool:
+        path = f'/dev/shm/fwbox.{self}.sr'
+        if os.path.isfile(path):
+            os.unlink(path)
+        x = self.run('--output-file', path, '--output-format', 'srzip', '--samples', num, '--config', f'samplerate={self.speed}')
+        if x.returncode == 0:
+            logger.info('Press <Space> in pulseview to reload the file')
+            return path
+        else:
+            logger.error('capture failed')
+
 
 Runner.types.append(SigrokRunner)
