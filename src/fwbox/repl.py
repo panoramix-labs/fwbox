@@ -11,6 +11,7 @@ RED = '\x1b[1;31m'
 GREEN = '\x1b[1;32m'
 YELLOW = '\x1b[1;33m'
 BLUE = '\x1b[1;34m'
+BOLD = '\x1b[1m'
 END = '\x1b[m'
 
 
@@ -56,7 +57,7 @@ class Shell(cmd.Cmd):
 
         for name, runner in Runner.all.items():
             res = f'{GREEN}OK{END}' if runner.ping() else f'{RED}ERR{END}'
-            print(f'[{res}] {name}: {runner.channels}')
+            print(f'[{res}] {BOLD}{name}{END}: {runner.channels}')
 
     def do_EOF(self, arg):
         '''Called when hitting Ctrl+D to quit'''

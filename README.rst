@@ -1,5 +1,4 @@
-fwbox
-#####
+.. image:: fwbox.png
 
 Firmware debugging box: a python REPL running locally and running
 commands for debugging firmware on a local or remote machine.
