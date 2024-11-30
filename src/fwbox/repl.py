@@ -27,9 +27,9 @@ class Shell(cmd.Cmd):
 
     def preloop(self):
         print('''-- Scanning all runners...''')
-        self.do_refresh('')
+        self.do_scan('')
 
-    def do_refresh(self, arg: str):
+    def do_scan(self, arg: str):
         '''Open all available runners'''
 
         for _, platform in Platform.all.items():
@@ -46,7 +46,7 @@ class Shell(cmd.Cmd):
         SshPlatform(arg)
         self.do_refresh('')
 
-    def do_forget(self, arg: str):
+    def do_reset(self, arg: str):
         '''Reset the list of connected runners'''
 
         global runners

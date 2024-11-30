@@ -90,7 +90,7 @@ Now if I unplug the logic analyzer and attach it to my local computer, it appear
 
 .. code-block:: console
 
-   fwbox$ refresh
+   fwbox$ scan
    ...
    fwbox$ list
    $ sigrok-cli --driver demo --config  --show
