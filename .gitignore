@@ -1,0 +1,7 @@
+*.html
+*.tar.gz
+*.whl
+*.egg-info
+__pycache__
+/build
+/dist
