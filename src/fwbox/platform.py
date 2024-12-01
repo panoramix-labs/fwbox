@@ -31,9 +31,9 @@ class LocalPlatform(Platform):
     def download(self, file):
         return file
 
-    def run(self, *args):
+    def run(self, *args, stdout=subprocess.PIPE, **kwargs):
         logger.debug('$ ' + ' '.join(args))
-        return subprocess.run(args, stdout=subprocess.PIPE)
+        return subprocess.run(args, stdout=stdout)
 
 
 class SshPlatform(Platform):
@@ -47,7 +47,10 @@ class SshPlatform(Platform):
         if subprocess.run(args, stdout=subprocess.PIPE).returncode == 0:
             return file
 
-    def run(self, *args):
-        args = ['ssh', *self.opts, self.name] + ["'" + x.replace("'", '') + "'" for x in args]
+    def run(self, *args, stdout=subprocess.PIPE, interactive=False):
+        args = [f"'{x.replace("'", '')}'" for x in args]
+        if interactive:
+            args.insert(0, '-t')
+        args = ['ssh', *self.opts, self.name] + args
         logger.debug('$ ' + ' '.join(args))
-        return subprocess.run(args, stdout=subprocess.PIPE)
+        return subprocess.run(args, stdout=stdout)

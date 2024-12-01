@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import re
+import subprocess
 
 from fwbox.platform import Platform
 
@@ -17,6 +18,8 @@ class Runner:
         self.channels = list()
         self.platform = platform
         self.all[str(self)] = self
+        self.speed = None
+        self.count = None
 
     def __str__(self):
         return type(self).str(self.name, self.platform)
@@ -45,6 +48,6 @@ class Runner:
         '''Return a whether the connection with the runner is alive.'''
         logger.warning(f'"ping" not implemented for {self}')
 
-    def run(self, *args):
+    def run(self, *args, stdout=subprocess.PIPE, interactive=False):
         '''Run the runner command on the current platform.'''
-        return self.platform.run(*self.command, *args)
+        return self.platform.run(*self.command, *args, stdout=stdout, interactive=interactive)

@@ -22,11 +22,9 @@ class SigrokRunner(Runner):
 
     def __init__(self, name: str, platform: Platform):
         super(SigrokRunner, self).__init__(name, platform)
-
-        self.driver = name
-        self.command = self.command + ('--driver', self.driver)
+        self.command = self.command + ('--driver', name)
         self.speed = '8M'
-
+        self.count = '10000'
         stdout = self.run('--show').stdout
         for line in stdout.decode('utf8').split('\n'):
             words = line.split(' ')
@@ -36,7 +34,6 @@ class SigrokRunner(Runner):
     @classmethod
     def scan(cls, platform: Platform) -> list[str]:
         '''list all sigrok devices attached to this platform'''
-
         stdout = platform.run(*cls.command, '--scan').stdout
         for line in stdout.decode('utf8').split('\n'):
             fields = line.split(' - ')
@@ -46,12 +43,13 @@ class SigrokRunner(Runner):
     def ping(self) -> bool:
         return self.run('--show').returncode == 0
 
-    def capture(self, num: str) -> bool:
+    def capture(self, channels: list[str]) -> bool:
         path = f'/dev/shm/fwbox.{self}.sr'
         if os.path.isfile(path):
             os.unlink(path)
         x = self.run('--output-file', path, '--output-format', 'srzip',
-                     '--samples', num, '--config', f'samplerate={self.speed}')
+                     '--samples', self.count, '--config', f'samplerate={self.speed}',
+                     '--channels', ','.join(channels))
         if x.returncode == 0:
             logger.info('Press <Space> in pulseview to reload the file')
             return path

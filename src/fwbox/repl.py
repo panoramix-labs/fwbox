@@ -4,6 +4,7 @@
 import cmd
 import socket
 import logging
+import sys
 
 from fwbox import *
 
@@ -23,9 +24,7 @@ class Shell(cmd.Cmd):
     intro = '''Shell ready. Type 'help' or '?' to list commands.'''
     prompt = '>>> '
     runner = None
-
-    def parse(self, arg: str):
-        return tuple(arg.split())
+    log_levels = ('error', 'warning', 'info', 'debug')
 
     def close(self):
         pass
@@ -47,13 +46,18 @@ class Shell(cmd.Cmd):
         SshPlatform(arg)
         self.do_scan('')
 
+    def do_list(self, arg: str):
+        '''List all runners to check if they are still connected'''
+        for name, runner in Runner.all.items():
+            res = f'{GREEN}OK{END}' if runner.ping() else f'{RED}ERR{END}'
+            logger.info(f'{res}:{BOLD}{name}{END}: {runner.channels}')
+
     def do_use(self, arg: str):
         '''Select a runner to use with other commands'''
         if arg in Runner.all:
             self.runner = Runner.all[arg]
         else:
             logger.error(f'Cannot find {arg}. Run "scan" then "list" to see all runners')
-
     def complete_use(self, text: str, line: str, begidx: int, endidx: int):
         return [x for x, _ in Runner.all.items() if x.startswith(text)]
 
@@ -62,10 +66,12 @@ class Shell(cmd.Cmd):
         if self.runner is None:
             logger.error('Select a runner first with the "use runner_name" command')
             return
-        file = self.runner.capture(args or "100")
+        file = self.runner.capture(args.split())
         if file is not None:
             file = self.runner.platform.download(file)
             logger.info(f'Capture available at: {file}')
+    def complete_capture(self, text: str, line: str, begidx: int, endidx: int):
+        return [x + ' ' for x in self.runner.channels if x.startswith(text)]
 
     def do_speed(self, args: str):
         '''Set the speed parameter of the runner'''
@@ -77,6 +83,16 @@ class Shell(cmd.Cmd):
         else:
             self.runner.speed = args
 
+    def do_count(self, args: str):
+        '''Set the number of capture samples the current runner'''
+        if self.runner is None:
+            logger.error('Select a runner first with the "use runner_name" command')
+            return
+        if len(args) == 0:
+            logger.info(f'current sample count is {self.runner.count}')
+        else:
+            self.runner.count = args
+
     def do_reset(self, arg: str):
         '''Reset the list of connected runners'''
         global runners
@@ -84,24 +100,20 @@ class Shell(cmd.Cmd):
 
     def do_log(self, arg: str):
         '''Set log verbosity'''
-        levels = ('error', 'warning', 'warn', 'info', 'debug')
-        if arg.lower() in levels:
+        if arg.lower() in self.log_levels:
             logger.setLevel(getattr(logging, arg.upper()))
         else:
-            logger.error(f'Supported log levels: {levels}')
-
-    def do_list(self, arg: str):
-        '''List all runners to check if they are still connected'''
-        for name, runner in Runner.all.items():
-            res = f'{GREEN}OK{END}' if runner.ping() else f'{RED}ERR{END}'
-            logger.info(f'{res}:{BOLD}{name}{END}: {runner.channels}')
+            logger.error(f'Supported log levels: {self.log_levels}')
+    def complete_log(self, text: str, line: str, begidx: int, endidx: int):
+        return [x + ' ' for x in self.log_levels if x.startswith(text)]
 
     def do_EOF(self, arg):
         '''Called when hitting Ctrl+D to quit'''
-        logger.info('Quitting fwbox shell')
-        return self.do_quit(arg)
+        return True
 
 
 def repl():
     LocalPlatform('local')
-    Shell().cmdloop()
+    sh = Shell()
+    sh.cmdqueue.extend(sys.argv[1:])
+    sh.cmdloop()
