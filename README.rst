@@ -3,7 +3,15 @@
 Firmware debugging box: a python REPL running locally and running
 commands for debugging firmware on a local or remote machine.
 
-For now, only logic-analyzer captures are supported, via `sigrok-cli <https://sigrok.org/>`_.
+The following back-ends are currently supported:
+
+- ``sigrok-cli`` for connecting to any logic analyzer supported by the `sigrok project <https://sigrok.org/>`_.
+
+- ``gpiod`` for connecting to local GPIO chips
+
+The following actions are currently supported, depending on what the back-end nature:
+
+- ``capture`` for recording state changes or full decoding of a protocol
 
 .. image:: doc/screenshot.png
    :width: 100%
