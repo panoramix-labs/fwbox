@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.INFO)
 
 class Shell(cmd.Cmd):
     intro = '''Shell ready. Type 'help' or '?' to list commands.'''
-    prompt = f'fwbox$ '
+    prompt = '>>> '
     runner = None
 
     def parse(self, arg: str):
