@@ -3,7 +3,7 @@
 Firmware debugging box: a python REPL running locally and running
 commands for debugging firmware on a local or remote machine.
 
-For now, only logic-analyzer captures are supported, via [``sigrok-cli``](https://sigrok.org/).
+For now, only logic-analyzer captures are supported, via `sigrok-cli <https://sigrok.org/>`_.
 
 .. image:: doc/screenshot.png
    :width: 100%
@@ -76,15 +76,6 @@ to the remote computer, it appears as a remote device:
    >>>
 
 I can now perform a logic analyzer ``capture`` out of any of these devices:
-
-.. code-block:: console
-
-   >>> list
-   INFO:fwbox:OK:local_sigrokrunner_demo: ['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7']
-   INFO:fwbox:ERR:local_sigrokrunner_fx2lafw_conn_1_66: ['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7']
-   INFO:fwbox:OK:172_22_0_3_sigrokrunner_demo: ['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7']
-   INFO:fwbox:OK:172_22_0_3_sigrokrunner_fx2lafw_conn_1_8: ['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7']
-   >>>
 
 .. code-block:: console
 
