@@ -1,0 +1,58 @@
+/*
+ * Copyright (c) 2024 Panoramix Labs
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+	chosen {
+		zephyr,console = &cdc_acm_uart;
+		zephyr,shell-uart = &cdc_acm_uart;
+	};
+};
+
+&zephyr_udc0 {
+	status = "okay";
+
+	cdc_acm_uart: cdc0 {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+};
+
+&adc1 {
+	status = "okay";
+	st,adc-clock-source = <SYNC>;
+	st,adc-prescaler = <4>;
+
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@c {
+		reg = <12>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,resolution = <12>;
+		zephyr,vref-mv = <3300>;
+	};
+};
+
+&adc2 {
+	status = "okay";
+};
+
+&die_temp {
+	status = "okay";
+};
+
+&vref {
+	status = "okay";
+};
+
+&vbat {
+	status = "okay";
+};
+
+&vbus1 {
+	status = "okay";
+};
