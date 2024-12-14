@@ -1,15 +1,20 @@
 .. image:: doc/fwbox.png
 
-Firmware debugging box: a python REPL running locally and running
-commands for debugging firmware on a local or remote machine.
+A shell to debug firmware:
 
-The following back-ends are currently supported:
+* The local machine needs python (no 3rd-party dependency) and an SSH client.
 
-- ``sigrok-cli`` for connecting to any logic analyzer supported by the `sigrok project <https://sigrok.org/>`_.
+* The debugger machine needs an SSH server and the debugger command installed.
 
-- ``gpiod`` for connecting to local GPIO chips
+* If debugging is done locally, then SSH is not needed.
 
-The following actions are currently supported, depending on what the back-end nature:
+Supported debuggers:
+
+* `sigrok-cli <https://sigrok.org/>` supporting many logic analyzers_.
+
+* `gpiod` for connecting to local GPIO chips present on many SBC
+
+Supported operations:
 
 - ``capture`` for recording state changes or full decoding of a protocol
 

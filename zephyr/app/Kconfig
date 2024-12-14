@@ -1,0 +1,8 @@
+# Copyright (c) 2024 Panoramix Labs
+# SPDX-License-Identifier: Apache-2.0
+
+source "Kconfig.zephyr"
+
+module = APP
+module-str = APP
+source "subsys/logging/Kconfig.template.log_config"

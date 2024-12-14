@@ -73,7 +73,27 @@ class Shell(cmd.Cmd):
     def complete_capture(self, text: str, line: str, begidx: int, endidx: int):
         return [x + ' ' for x in self.runner.channels if x.startswith(text)]
 
-    def do_speed(self, args: str):
+    def do_pin(self, args: str):
+        self.target.pin_read(args)
+    def complete_pin(self, text: str, line: str, begidx: int, endidx: int):
+        return [x + ' ' for x in self.runner.channels if x.startswith(text)]
+
+    def do_pin_high(self, args: str):
+        self.target.pin_write(args, True)
+    def complete_pin_high(self, text: str, line: str, begidx: int, endidx: int):
+        return [x + ' ' for x in self.runner.channels if x.startswith(text)]
+
+    def do_pin_low(self, args: str):
+        self.target.pin_write(args, False)
+    def complete_pin_high(self, text: str, line: str, begidx: int, endidx: int):
+        return [x + ' ' for x in self.runner.channels if x.startswith(text)]
+
+    def do_pin_blink(self, args: str):
+        self.target.pin_write(args, False)
+    def complete_pin_high(self, text: str, line: str, begidx: int, endidx: int):
+        return [x + ' ' for x in self.runner.channels if x.startswith(text)]
+
+    def do_set_speed(self, args: str):
         '''Set the speed parameter of the runner'''
         if self.runner is None:
             logger.error('Select a runner first with the "use runner_name" command')
@@ -83,7 +103,7 @@ class Shell(cmd.Cmd):
         else:
             self.runner.speed = args
 
-    def do_count(self, args: str):
+    def do_set_count(self, args: str):
         '''Set the number of capture samples the current runner'''
         if self.runner is None:
             logger.error('Select a runner first with the "use runner_name" command')
