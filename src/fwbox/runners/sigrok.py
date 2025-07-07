@@ -34,7 +34,11 @@ class SigrokRunner(Runner):
     @classmethod
     def scan(cls, platform: Platform) -> list[str]:
         '''list all sigrok devices attached to this platform'''
-        stdout = platform.run(*cls.command, '--scan').stdout
+        try:
+            stdout = platform.run(*cls.command, '--scan').stdout
+        except FileNotFoundError:
+            logger.warning(f'{cls.command[0]} command not found')
+            return
         for line in stdout.decode('utf8').split('\n'):
             fields = line.split(' - ')
             if len(fields) > 1:

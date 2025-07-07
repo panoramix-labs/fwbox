@@ -32,7 +32,11 @@ class GpiodRunner(Runner):
 
     @classmethod
     def scan(cls, platform: Platform) -> list[str]:
-        stdout = platform.run('gpiodetect').stdout
+        try:
+            stdout = platform.run('gpiodetect').stdout
+        except FileNotFoundError:
+            logger.warning('gpiodetect command not found')
+            return
         for line in stdout.decode('utf8').split('\n'):
             match = re.search('\\[([^]]+)\\]', line)
             if match and match.group(1):
