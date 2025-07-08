@@ -66,10 +66,12 @@ class Shell(cmd.Cmd):
         if self.runner is None:
             logger.error('Select a runner first with the "use runner_name" command')
             return
+        logger.info(f'Capturing {self.runner.count} values at speed {self.runner.speed}')
         file = self.runner.capture(args.split())
         if file is not None:
+            logger.info('Downloading the capture...')
             file = self.runner.platform.download(file)
-            logger.info(f'Capture available at: {file}')
+            logger.info(f'Done, open {file} in pulseview or press <Space> to reload the file')
     def complete_capture(self, text: str, line: str, begidx: int, endidx: int):
         return [x + ' ' for x in self.runner.channels if x.startswith(text)]
 

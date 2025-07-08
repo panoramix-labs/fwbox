@@ -55,7 +55,6 @@ class SigrokRunner(Runner):
                      '--samples', self.count, '--config', f'samplerate={self.speed}',
                      '--channels', ','.join(channels))
         if x.returncode == 0:
-            logger.info('Press <Space> in pulseview to reload the file')
             return path
         else:
             logger.error('capture failed')
